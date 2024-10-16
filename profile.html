@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .profile-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            text-align: center;
+        }
+        .profile-picture {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+        }
+        .username, .balance {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .input-field {
+            margin-bottom: 10px;
+        }
+        .share-chat-link, .update-button, .gift-button, .home-button {
+            display: block;
+            text-decoration: none;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        .share-chat-link:hover, .update-button:hover, .gift-button:hover, .home-button:hover {
+            background-color: #45a049;
+        }
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="profile-container">
+    <!-- Profile Picture -->
+    <img src="https://via.placeholder.com/100" alt="Profile Picture" class="profile-picture" id="profilePicture">
+
+    <!-- Input for Username -->
+    <div class="input-field">
+        <label for="usernameInput">Username:</label><br>
+        <input type="text" id="usernameInput" placeholder="Enter your username">
+    </div>
+
+    <!-- Display Username -->
+    <div class="username" id="usernameDisplay">Username: Not set</div>
+
+    <!-- Display Balance -->
+    <div class="balance" id="balanceDisplay">Balance: $0</div>
+
+    <!-- Shareable Profile Link -->
+    <a href="#" id="shareChatLink" class="share-chat-link">Share Profile Link</a>
+
+    <!-- Button to Update Username and Picture -->
+    <button id="updateButton" class="update-button">Update Profile</button>
+
+    <!-- Button to Gift Money -->
+    <button id="giftButton" class="gift-button">💵 Gift $1,000</button>
+
+    <!-- Home Button -->
+    <a href="index.html" class="home-button">Home</a> <!-- Home Button -->
+</div>
+
+<!-- Gifting Modal -->
+<div id="giftModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeModal">&times;</span>
+        <h2>Gift $1,000</h2>
+        <div class="input-field">
+            <label for="giftUsername">Recipient Username:</label><br>
+            <input type="text" id="giftUsername" placeholder="Enter recipient's username" required>
+        </div>
+        <div class="input-field">
+            <label for="giftCode">Gift Code:</label><br>
+            <input type="text" id="giftCode" placeholder="Enter code" required>
+        </div>
+        <button id="sendGiftButton" class="update-button">Send Gift</button>
+    </div>
+</div>
+
+<script>
+    let balance = 0; // Initial balance
+    const usernameInput = document.getElementById('usernameInput');
+    const usernameDisplay = document.getElementById('usernameDisplay');
+    const balanceDisplay = document.getElementById('balanceDisplay');
+    const profilePicture = document.getElementById('profilePicture');
+
+    // Update Profile Button Click Event
+    document.getElementById('updateButton').addEventListener('click', function() {
+        const username = usernameInput.value.trim();
+        if (username) {
+            usernameDisplay.textContent = `Username: ${username}`;
+            usernameInput.value = ''; // Clear input field
+        } else {
+            alert('Please enter a valid username.');
+        }
+    });
+
+    // Shareable Profile Link
+    document.getElementById('shareChatLink').addEventListener('click', function(event) {
+        event.preventDefault();
+        const profileLink = `${window.location.origin}/profile.html?user=${encodeURIComponent(usernameDisplay.textContent.split(': ')[1])}`;
+        navigator.clipboard.writeText(profileLink)
+            .then(() => {
+                alert("Profile link copied to clipboard! Share it with others.");
+            })
+            .catch(err => {
+                alert("Failed to copy the link.");
+            });
+    });
+
+    // Gifting Modal
+    const giftModal = document.getElementById('giftModal');
+    const giftButton = document.getElementById('giftButton');
+    const closeModal = document.getElementById('closeModal');
+
+    giftButton.addEventListener('click', function() {
+        giftModal.style.display = 'block'; // Show the gifting modal
+    });
+
+    closeModal.addEventListener('click', function() {
+        giftModal.style.display = 'none'; // Close the modal
+    });
+
+    // Gift Button Click Event
+    document.getElementById('sendGiftButton').addEventListener('click', function() {
+        const giftUsername = document.getElementById('giftUsername').value.trim();
+        const giftCode = document.getElementById('giftCode').value.trim();
+
+        if (giftUsername && giftCode && isValidGiftCode(giftCode)) {
+            balance += 1000; // Increment balance by 1000
+            balanceDisplay.textContent = `Balance: $${balance}`;
+            alert(`Gift of $1,000 sent to ${giftUsername}!`);
+            giftModal.style.display = 'none'; // Close the modal
+            document.getElementById('giftUsername').value = ''; // Clear input
+            document.getElementById('giftCode').value = ''; // Clear input
+        } else {
+            alert('Please enter a valid username and gift code.');
+        }
+    });
+
+    // Function to validate gift code
+    function isValidGiftCode(code) {
+        const regex = /(?=(.*8.*8))/; // Check if code contains two 8s
+        return regex.test(code);
+    }
+</script>
+
+</body>
+</html>

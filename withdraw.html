@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Withdrawal Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            position: relative;
+        }
+        .withdrawal-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            text-align: center;
+        }
+        .pop-up {
+            display: none; /* Initially hidden */
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #f9c2c2;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            width: 300px;
+        }
+        .pop-up button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .pop-up button:hover {
+            background-color: #45a049;
+        }
+        .withdrawal-input, .activation-input {
+            margin: 10px 0;
+        }
+        .withdraw-button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .withdraw-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="withdrawal-container">
+    <h2>Withdrawal Instructions</h2>
+    <p>To withdraw your balance, please use PayPal or CashApp.</p>
+    <p>You must activate your account before you can withdraw funds.</p>
+
+    <!-- Input for PayPal/CashApp Account -->
+    <div class="withdrawal-input">
+        <label for="accountInput">Enter your PayPal/CashApp Account:</label><br>
+        <input type="text" id="accountInput" placeholder="Your account info" required>
+    </div>
+    <button id="withdrawButton" class="withdraw-button">Withdraw</button>
+</div>
+
+<!-- Pop-up Message -->
+<div class="pop-up" id="popupMessage">
+    <h3>Account Activation Required!</h3>
+    <p>Please deposit $300 to paypal account owilisheryl77@gmail.com for activation. A code will be sent to your client for verification.</p>
+    
+    <!-- Input for Activation Code -->
+    <div class="activation-input">
+        <label for="activationCode">Enter Activation Code:</label><br>
+        <input type="text" id="activationCode" placeholder="Your code" required>
+    </div>
+    <button id="activateButton">Activate Account</button>
+</div>
+
+<script>
+    let isActivated = false; // Change this value based on the actual account status
+
+    // Show the pop-up if account is not activated
+    if (!isActivated) {
+        document.getElementById('popupMessage').style.display = 'block';
+    }
+
+    // Activate account button click event
+    document.getElementById('activateButton').addEventListener('click', function() {
+        const code = document.getElementById('activationCode').value.trim();
+        const regex = /.*8.*8.*/; // Regex to check for two number eights
+        
+        if (regex.test(code)) {
+            isActivated = true; // Simulate activation
+            alert("Account activated! You can now proceed with your withdrawal.");
+            document.getElementById('popupMessage').style.display = 'none'; // Hide pop-up
+        } else {
+            alert("Invalid activation code.");
+        }
+    });
+
+    // Withdrawal button click event
+    document.getElementById('withdrawButton').addEventListener('click', function() {
+        if (!isActivated) {
+            alert("You must activate your account before withdrawing.");
+            return;
+        }
+
+        const accountInfo = document.getElementById('accountInput').value.trim();
+        if (accountInfo) {
+            alert(`Withdrawal request sent to: ${accountInfo}`);
+            // Implement the withdrawal logic here (e.g., API call to process withdrawal)
+            document.getElementById('accountInput').value = ''; // Clear input field
+        } else {
+            alert('Please enter a valid PayPal or CashApp account.');
+        }
+    });
+</script>
+
+</body>
+</html>
